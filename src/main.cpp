@@ -102,6 +102,7 @@ ERA_CONNECTED() {
 // Nhận giá trị cài đặt ánh sáng từ chân V3
 ERA_WRITE(V3) {
     setpointLux = param.getFloat();
+    ERa.virtualWrite(V3, setpointLux); // Cập nhật xác nhận giá trị lên App
     ERA_LOG("Setting", "Da nhan gia tri dat moi: %.2f lx", setpointLux);
 }
 

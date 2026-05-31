@@ -524,8 +524,10 @@
     // Sự kiện Cập nhật Setpoint
     btnSendSetpoint.addEventListener('click', () => {
       const val = parseFloat(inputSetpoint.value);
-      if (!isNaN(val) && actionSetpoint) {
-        eraWidget.triggerAction(actionSetpoint.action, val);
+      if (!isNaN(val)) {
+        if (actionSetpoint) eraWidget.triggerAction(actionSetpoint.action, val);
+        if (configSetpoint) eraWidget.updateRealtimeConfig(configSetpoint.id, val);
+        setpointValue.innerHTML = val.toFixed(0);
       }
     });
 
