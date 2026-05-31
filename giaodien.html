@@ -307,10 +307,9 @@
       </div>
       <div class="card">
         <h5 class="text-danger">CÀI ĐẶT ÁNH SÁNG (LUX)</h5>
-        <h4 id="setpointValue" class="fw-bold mt-3">300</h4>
-        <div style="margin-top:15px; display: flex; flex-direction: column; align-items: center; gap: 10px;">
-          <input type="range" id="inputSetpoint" min="0" max="1000" value="300" style="width: 80%; cursor: pointer;">
-          <span id="sliderValueDisplay" style="font-weight: bold; color: #555;">300 Lux</span>
+        <h4 id="setpointValue" class="fw-bold mt-3" style="font-size: 2.5rem; margin-bottom: 20px;">300</h4>
+        <div style="margin-top:15px;">
+          <span class="text-muted" style="font-size: 0.9rem;">(Kéo thanh trượt ERa để cài đặt)</span>
         </div>
       </div>
     </div>
@@ -374,8 +373,6 @@
     // Các biến giao diện
     const modeStatus = document.getElementById('modeStatus');
     const setpointValue = document.getElementById('setpointValue');
-    const inputSetpoint = document.getElementById('inputSetpoint');
-    const sliderValueDisplay = document.getElementById('sliderValueDisplay');
     const btnAuto = document.getElementById('btnAuto');
     const btnManual = document.getElementById('btnManual');
 
@@ -394,8 +391,8 @@
       7: Relay 4 (V7)
 
       Actions (Cần 10 cái, đúng thứ tự):
-      0: Chuyển Mode (Gửi giá trị)
-      1: Gửi Setpoint (Gửi giá trị)
+      0: Bật chế độ AUTO (Value 1)
+      1: Bật chế độ MANUAL (Value 0)
       2: Bật Relay 1
       3: Tắt Relay 1
       4: Bật Relay 2
@@ -416,8 +413,8 @@
     let configRelay = [];
 
     // Biến lưu Action
-    let actionMode = null;
-    let actionSetpoint = null;
+    let actionAuto = null;
+    let actionManual = null;
     let actionRelaysOn = [];
     let actionRelaysOff = [];
 
@@ -447,8 +444,8 @@
         }
 
         // Gán Actions
-        if (configuration.actions.length > 0) actionMode = configuration.actions[0];
-        if (configuration.actions.length > 1) actionSetpoint = configuration.actions[1];
+        if (configuration.actions.length > 0) actionAuto = configuration.actions[0];
+        if (configuration.actions.length > 1) actionManual = configuration.actions[1];
 
         for (let i = 0; i < 4; i++) {
           let baseIdx = 2 + (i * 2);
@@ -513,24 +510,10 @@
 
     // Sự kiện nút Auto / Manual
     btnAuto.addEventListener('click', () => {
-      if (actionMode) eraWidget.triggerAction(actionMode.action, 1);
+      if (actionAuto) eraWidget.triggerAction(actionAuto.action, null);
     });
     btnManual.addEventListener('click', () => {
-      if (actionMode) eraWidget.triggerAction(actionMode.action, 0);
-    });
-
-    // Sự kiện Cập nhật Setpoint
-    inputSetpoint.addEventListener('input', () => {
-      sliderValueDisplay.innerHTML = inputSetpoint.value + ' Lux';
-    });
-
-    inputSetpoint.addEventListener('change', () => {
-      const val = parseFloat(inputSetpoint.value);
-      if (!isNaN(val)) {
-        if (actionSetpoint) eraWidget.triggerAction(actionSetpoint.action, val);
-        if (configSetpoint) eraWidget.updateRealtimeConfig(configSetpoint.id, val);
-        setpointValue.innerHTML = val.toFixed(0);
-      }
+      if (actionManual) eraWidget.triggerAction(actionManual.action, null);
     });
 
     // Sự kiện Bật / Tắt Relay
