@@ -1,0 +1,561 @@
+<!doctype html>
+<html lang="vi" class="light-style layout-menu-fixed layout-compact" dir="ltr">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Điều Khiển & Giám Sát 8 Relay</title>
+
+  <link rel="icon" type="image/x-icon" href="assets/img/favicon/favicon.ico" />
+  <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700&display=swap"
+    rel="stylesheet" />
+
+  <script src="https://code.highcharts.com/highcharts.js"></script>
+  <script src="https://code.highcharts.com/highcharts-more.js"></script>
+  <script src="https://code.highcharts.com/modules/exporting.js"></script>
+  <script src="https://code.highcharts.com/modules/accessibility.js"></script>
+  <script src="https://www.unpkg.com/@eohjsc/era-widget@1.1.3/src/index.js"></script>
+
+  <style>
+    body {
+      font-family: 'Public Sans', sans-serif;
+      background-color: #f1f3f6;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    .header-card {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border: 2px solid #007bff;
+      border-radius: 10px;
+      padding: 24px;
+      background-color: #f8f9fa;
+      box-shadow: 0 0 12px rgba(0, 123, 255, 0.2);
+      flex-wrap: wrap;
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      flex: 1;
+    }
+
+    .header-left img {
+      height: 80px;
+      max-width: 100%;
+    }
+
+    .project-title {
+      color: #1E40AF;
+      font-weight: 500;
+      font-size: 1.2rem;
+      margin: 0;
+    }
+
+    .project-info {
+      color: #000;
+      font-size: 16px;
+      margin: 4px 0;
+    }
+
+    .header-center {
+      flex: 2;
+    }
+
+    .card-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+
+    .card {
+      background: #fff;
+      border-radius: 10px;
+      padding: 15px;
+      box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+      text-align: center;
+    }
+
+    .gauge-row {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+
+    .gauge-row>div {
+      width: 100%;
+      height: 250px;
+    }
+
+    .relay-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      grid-template-rows: repeat(2, auto);
+      gap: 20px;
+    }
+
+    .relay-box {
+      border: 2px solid #e0e0e0;
+      border-radius: 14px;
+      padding: 16px;
+      background: linear-gradient(145deg, #ffffff, #f3f4f6);
+      box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+    }
+
+    .relay-box.on {
+      background: linear-gradient(145deg, #e8f9f0, #d1f7e2);
+      border-color: #22c55e;
+      box-shadow: 0 0 12px rgba(34, 197, 94, 0.5);
+    }
+
+    .relay-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .relay-title {
+      font-weight: 600;
+    }
+
+    .relay-light {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background-color: #9ca3af;
+      box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.3);
+      transition: all 0.4s ease;
+    }
+
+    .relay-light.on {
+      background-color: #22c55e;
+      box-shadow: 0 0 12px #4ade80, 0 0 24px #86efac;
+    }
+
+    .relay-status {
+      font-weight: 600;
+      font-size: 14px;
+      margin-top: 5px;
+      display: inline-block;
+    }
+
+    .relay-status.on {
+      color: #22c55e;
+    }
+
+    .relay-status.off {
+      color: #6b7280;
+    }
+
+    .btn {
+      display: inline-block;
+      cursor: pointer;
+      border: 1px solid transparent;
+      border-radius: 20px;
+      padding: 4px 14px;
+      font-weight: 500;
+      margin: 2px;
+      text-align: center;
+      text-decoration: none;
+      font-size: 0.875rem;
+    }
+
+    .btn-sm {
+      padding: 2px 10px;
+      font-size: 0.75rem;
+    }
+
+    .btn-outline-success {
+      color: #198754;
+      border-color: #198754;
+      background-color: transparent;
+    }
+
+    .btn-outline-success:hover {
+      background-color: #198754;
+      color: white;
+    }
+
+    .btn-outline-danger {
+      color: #dc3545;
+      border-color: #dc3545;
+      background-color: transparent;
+    }
+
+    .btn-outline-danger:hover {
+      background-color: #dc3545;
+      color: white;
+    }
+
+    .btn-outline-primary {
+      color: #0d6efd;
+      border-color: #0d6efd;
+      background-color: transparent;
+    }
+
+    .btn-outline-primary:hover {
+      background-color: #0d6efd;
+      color: white;
+    }
+
+    .text-primary {
+      color: #0d6efd;
+    }
+
+    .text-danger {
+      color: #dc3545;
+    }
+
+    .text-success {
+      color: #198754;
+    }
+
+    .text-muted {
+      color: #6c757d;
+    }
+
+    .mt-3 {
+      margin-top: 1rem;
+    }
+
+    .mb-1 {
+      margin-bottom: 0.25rem;
+    }
+
+    .fw-bold {
+      font-weight: bold;
+    }
+
+    /* Responsive */
+    @media (max-width: 992px) {
+      .header-card {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      .header-left,
+      .header-center {
+        flex: none;
+        width: 100%;
+      }
+
+      .gauge-row {
+        grid-template-columns: 1fr;
+      }
+
+      .relay-row {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        padding: 10px;
+      }
+
+      .relay-row {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <!-- Header Section -->
+    <div class="header-card">
+      <div class="header-left">
+        <!-- Logo default, có thể thay thế sau -->
+        <img src="https://cdn.haitrieu.com/wp-content/uploads/2021/12/Logo-DH-Thu-Dau-Mot-TDMU.png" alt="Logo">
+      </div>
+      <div class="header-center">
+        <h2 class="project-title"> MÔ HÌNH GIÁM SÁT VÀ ĐIỀU KHIỂN CHIẾU SÁNG PHÒNG A4 - 111 </h2>
+        <div style="margin-top:5px;">
+          <h5 id="currentDateTime" style="font-weight:600;color:#000000;">
+            --/--/---- --:--:--
+          </h5>
+          <p class="project-info"><strong>GVHD:</strong> Th.S Nguyễn Cao Trí</p>
+          <p class="project-info"><strong>SVTH:</strong><br>Nguyễn Văn Quân - 2525202010195 <br> Lê Phước Nguyên -
+            2225202160006 </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Info Row -->
+    <div class="card-row">
+      <div class="card">
+        <h5 class="text-primary">CHẾ ĐỘ ĐIỀU KHIỂN</h5>
+        <h4 id="modeStatus" class="fw-bold text-primary mt-3">AUTO</h4>
+        <div style="margin-top:15px;">
+          <button id="btnAuto" class="btn btn-outline-success">Auto</button>
+          <button id="btnManual" class="btn btn-outline-danger">Manual</button>
+        </div>
+      </div>
+      <div class="card">
+        <h5 class="text-danger">CÀI ĐẶT ÁNH SÁNG (LUX)</h5>
+        <h4 id="setpointValue" class="fw-bold mt-3">300</h4>
+        <div style="margin-top:15px; display: flex; justify-content: center; gap: 10px; align-items: center;">
+          <input type="number" id="inputSetpoint"
+            style="width: 100px; text-align: center; border-radius: 5px; border: 1px solid #ccc; padding: 5px;"
+            value="300">
+          <button id="btnSendSetpoint" class="btn btn-outline-primary">Cập nhật</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Gauges Section -->
+    <div class="gauge-row">
+      <div id="gaugeLight1"></div>
+      <div id="gaugeLight2"></div>
+    </div>
+
+    <!-- Relays Section -->
+    <div class="relay-row" id="relayContainer">
+      <!-- Relays will be created by JS -->
+    </div>
+  </div>
+
+  <script>
+    // 1. Tạo giao diện Relay tự động
+    const relayContainer = document.getElementById('relayContainer');
+    for (let i = 1; i <= 8; i++) {
+      const div = document.createElement('div');
+      div.classList.add('card');
+      div.innerHTML = `
+        <div class="relay-box" id="relayBox${i}">
+          <div class="relay-header">
+            <span class="relay-title">Relay ${i}</span>
+            <div id="relayLight${i}" class="relay-light"></div>
+          </div>
+          <small id="statusLed${i}" class="relay-status off">Tắt</small>
+          <div style="margin-top:10px;">
+            <button id="${i}turnOn" class="btn btn-outline-success btn-sm">Bật</button>
+            <button id="${i}turnOff" class="btn btn-outline-danger btn-sm">Tắt</button>
+          </div>
+        </div>
+      `;
+      relayContainer.appendChild(div);
+    }
+
+    // 2. Highcharts gauges cho ánh sáng
+    function createGauge(container, title, color, max = 1000) {
+      return Highcharts.chart(container, {
+        chart: { type: 'gauge', height: 250, backgroundColor: 'transparent' },
+        title: { text: title },
+        pane: { startAngle: -150, endAngle: 150 },
+        yAxis: {
+          min: 0, max: max, tickInterval: max / 5,
+          plotBands: [
+            { from: 0, to: max * 0.3, color: '#DF5353' }, // Tối -> Đỏ
+            { from: max * 0.3, to: max * 0.7, color: '#DDDF0D' }, // Vừa -> Vàng
+            { from: max * 0.7, to: max, color: '#55BF3B' } // Sáng -> Xanh
+          ],
+          title: { text: 'Lux' }
+        },
+        series: [{ name: title, data: [0], dial: { backgroundColor: color }, tooltip: { valueSuffix: ' Lux' } }]
+      });
+    }
+
+    const gaugeLight1 = createGauge('gaugeLight1', 'Cảm Biến Ánh Sáng 1', '#007bff');
+    const gaugeLight2 = createGauge('gaugeLight2', 'Cảm Biến Ánh Sáng 2', '#ff9800');
+
+    // Các biến giao diện
+    const modeStatus = document.getElementById('modeStatus');
+    const setpointValue = document.getElementById('setpointValue');
+    const inputSetpoint = document.getElementById('inputSetpoint');
+    const btnSendSetpoint = document.getElementById('btnSendSetpoint');
+    const btnAuto = document.getElementById('btnAuto');
+    const btnManual = document.getElementById('btnManual');
+
+    // 3. Cấu hình Era Widget
+    /*
+      LƯU Ý CẤU HÌNH TRÊN ERA DASHBOARD ĐỂ CODE CHẠY ĐÚNG:
+      
+      Realtime Configs (Cần 12 cái, đúng thứ tự):
+      0: Lux 1 (V0)
+      1: Lux 2 (V1)
+      2: Mode Auto/Manual (V2)
+      3: Setpoint (V3)
+      4: Relay 1 (V4)
+      5: Relay 2 (V5)
+      6: Relay 3 (V6)
+      7: Relay 4 (V7)
+      8: Relay 5 (V8)
+      9: Relay 6 (V9)
+      10: Relay 7 (V10)
+      11: Relay 8 (V11)
+
+      Actions (Cần 18 cái, đúng thứ tự):
+      0: Chuyển Mode (Gửi giá trị)
+      1: Gửi Setpoint (Gửi giá trị)
+      2: Bật Relay 1
+      3: Tắt Relay 1
+      4: Bật Relay 2
+      5: Tắt Relay 2
+      ...
+      16: Bật Relay 8
+      17: Tắt Relay 8
+    */
+
+    const eraWidget = new EraWidget();
+
+    // Biến lưu Config
+    let configLux1 = null;
+    let configLux2 = null;
+    let configMode = null;
+    let configSetpoint = null;
+    let configRelay = [];
+
+    // Biến lưu Action
+    let actionMode = null;
+    let actionSetpoint = null;
+    let actionRelaysOn = [];
+    let actionRelaysOff = [];
+
+    eraWidget.init({
+      needRealtimeConfigs: true,
+      needHistoryConfigs: false,
+      needActions: true,
+      maxRealtimeConfigsCount: 15,
+      maxActionsCount: 20,
+      minRealtimeConfigsCount: 0,
+      minActionsCount: 0,
+
+      onConfiguration: (configuration) => {
+        console.log("REALTIME CONFIGS:", configuration.realtime_configs);
+        console.log("ACTIONS:", configuration.actions);
+
+        // Gán Realtime Configs
+        if (configuration.realtime_configs.length > 0) configLux1 = configuration.realtime_configs[0];
+        if (configuration.realtime_configs.length > 1) configLux2 = configuration.realtime_configs[1];
+        if (configuration.realtime_configs.length > 2) configMode = configuration.realtime_configs[2];
+        if (configuration.realtime_configs.length > 3) configSetpoint = configuration.realtime_configs[3];
+
+        for (let i = 0; i < 8; i++) {
+          if (configuration.realtime_configs.length > 4 + i) {
+            configRelay[i] = configuration.realtime_configs[4 + i];
+          }
+        }
+
+        // Gán Actions
+        if (configuration.actions.length > 0) actionMode = configuration.actions[0];
+        if (configuration.actions.length > 1) actionSetpoint = configuration.actions[1];
+
+        for (let i = 0; i < 8; i++) {
+          let baseIdx = 2 + (i * 2);
+          if (configuration.actions.length > baseIdx) actionRelaysOn[i] = configuration.actions[baseIdx];
+          if (configuration.actions.length > baseIdx + 1) actionRelaysOff[i] = configuration.actions[baseIdx + 1];
+        }
+      },
+
+      onValues: (values) => {
+        // Cập nhật Lux 1
+        if (configLux1 && values[configLux1.id]) {
+          const v1 = values[configLux1.id].value;
+          gaugeLight1.series[0].points[0].update(Number(v1));
+        }
+        // Cập nhật Lux 2
+        if (configLux2 && values[configLux2.id]) {
+          const v2 = values[configLux2.id].value;
+          gaugeLight2.series[0].points[0].update(Number(v2));
+        }
+        // Cập nhật Mode
+        if (configMode && values[configMode.id]) {
+          const vMode = values[configMode.id].value;
+          if (vMode == 1) {
+            modeStatus.innerHTML = "AUTO";
+            modeStatus.className = "fw-bold text-success mt-3";
+          } else {
+            modeStatus.innerHTML = "MANUAL";
+            modeStatus.className = "fw-bold text-danger mt-3";
+          }
+        }
+        // Cập nhật Setpoint
+        if (configSetpoint && values[configSetpoint.id]) {
+          const vSet = values[configSetpoint.id].value;
+          setpointValue.innerHTML = parseFloat(vSet).toFixed(0);
+        }
+
+        // Cập nhật trạng thái Relay 1 - 8
+        for (let i = 0; i < 8; i++) {
+          if (configRelay[i] && values[configRelay[i].id]) {
+            const val = values[configRelay[i].id].value;
+            const relayBox = document.getElementById(`relayBox${i + 1}`);
+            const relayLight = document.getElementById(`relayLight${i + 1}`);
+            const statusLed = document.getElementById(`statusLed${i + 1}`);
+
+            if (val === 1) {
+              statusLed.innerHTML = `RELAY ${i + 1} đang bật`;
+              statusLed.classList.add('on');
+              statusLed.classList.remove('off');
+              relayLight.classList.add('on');
+              relayBox.classList.add('on');
+            } else {
+              statusLed.innerHTML = `RELAY ${i + 1} đang tắt`;
+              statusLed.classList.remove('on');
+              statusLed.classList.add('off');
+              relayLight.classList.remove('on');
+              relayBox.classList.remove('on');
+            }
+          }
+        }
+      }
+    });
+
+    // Sự kiện nút Auto / Manual
+    btnAuto.addEventListener('click', () => {
+      if (actionMode) eraWidget.triggerAction(actionMode.action, 1);
+    });
+    btnManual.addEventListener('click', () => {
+      if (actionMode) eraWidget.triggerAction(actionMode.action, 0);
+    });
+
+    // Sự kiện Cập nhật Setpoint
+    btnSendSetpoint.addEventListener('click', () => {
+      const val = parseFloat(inputSetpoint.value);
+      if (!isNaN(val) && actionSetpoint) {
+        eraWidget.triggerAction(actionSetpoint.action, val);
+      }
+    });
+
+    // Sự kiện Bật / Tắt Relay
+    for (let i = 1; i <= 8; i++) {
+      document.getElementById(`${i}turnOn`).addEventListener('click', () => {
+        if (actionRelaysOn[i - 1]) eraWidget.triggerAction(actionRelaysOn[i - 1].action, null);
+      });
+      document.getElementById(`${i}turnOff`).addEventListener('click', () => {
+        if (actionRelaysOff[i - 1]) eraWidget.triggerAction(actionRelaysOff[i - 1].action, null);
+      });
+    }
+
+    // Hàm cập nhật thời gian
+    function updateDateTime() {
+      const now = new Date();
+      const day = String(now.getDate()).padStart(2, '0');
+      const month = String(now.getMonth() + 1).padStart(2, '0');
+      const year = now.getFullYear();
+      const hours = String(now.getHours()).padStart(2, '0');
+      const minutes = String(now.getMinutes()).padStart(2, '0');
+      const seconds = String(now.getSeconds()).padStart(2, '0');
+      document.getElementById("currentDateTime").innerHTML = `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
+    }
+    updateDateTime();
+    setInterval(updateDateTime, 1000);
+  </script>
+</body>
+
+</html>
