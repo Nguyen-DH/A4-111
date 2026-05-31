@@ -332,7 +332,7 @@
   <script>
     // 1. Tạo giao diện Relay tự động
     const relayContainer = document.getElementById('relayContainer');
-    for (let i = 1; i <= 8; i++) {
+    for (let i = 1; i <= 4; i++) {
       const div = document.createElement('div');
       div.classList.add('card');
       div.innerHTML = `
@@ -385,7 +385,7 @@
     /*
       LƯU Ý CẤU HÌNH TRÊN ERA DASHBOARD ĐỂ CODE CHẠY ĐÚNG:
       
-      Realtime Configs (Cần 12 cái, đúng thứ tự):
+      Realtime Configs (Cần 8 cái, đúng thứ tự):
       0: Lux 1 (V0)
       1: Lux 2 (V1)
       2: Mode Auto/Manual (V2)
@@ -394,21 +394,18 @@
       5: Relay 2 (V5)
       6: Relay 3 (V6)
       7: Relay 4 (V7)
-      8: Relay 5 (V8)
-      9: Relay 6 (V9)
-      10: Relay 7 (V10)
-      11: Relay 8 (V11)
 
-      Actions (Cần 18 cái, đúng thứ tự):
+      Actions (Cần 10 cái, đúng thứ tự):
       0: Chuyển Mode (Gửi giá trị)
       1: Gửi Setpoint (Gửi giá trị)
       2: Bật Relay 1
       3: Tắt Relay 1
       4: Bật Relay 2
       5: Tắt Relay 2
-      ...
-      16: Bật Relay 8
-      17: Tắt Relay 8
+      6: Bật Relay 3
+      7: Tắt Relay 3
+      8: Bật Relay 4
+      9: Tắt Relay 4
     */
 
     const eraWidget = new EraWidget();
@@ -430,8 +427,8 @@
       needRealtimeConfigs: true,
       needHistoryConfigs: false,
       needActions: true,
-      maxRealtimeConfigsCount: 15,
-      maxActionsCount: 20,
+      maxRealtimeConfigsCount: 8,
+      maxActionsCount: 10,
       minRealtimeConfigsCount: 0,
       minActionsCount: 0,
 
@@ -445,7 +442,7 @@
         if (configuration.realtime_configs.length > 2) configMode = configuration.realtime_configs[2];
         if (configuration.realtime_configs.length > 3) configSetpoint = configuration.realtime_configs[3];
 
-        for (let i = 0; i < 8; i++) {
+        for (let i = 0; i < 4; i++) {
           if (configuration.realtime_configs.length > 4 + i) {
             configRelay[i] = configuration.realtime_configs[4 + i];
           }
@@ -455,7 +452,7 @@
         if (configuration.actions.length > 0) actionMode = configuration.actions[0];
         if (configuration.actions.length > 1) actionSetpoint = configuration.actions[1];
 
-        for (let i = 0; i < 8; i++) {
+        for (let i = 0; i < 4; i++) {
           let baseIdx = 2 + (i * 2);
           if (configuration.actions.length > baseIdx) actionRelaysOn[i] = configuration.actions[baseIdx];
           if (configuration.actions.length > baseIdx + 1) actionRelaysOff[i] = configuration.actions[baseIdx + 1];
@@ -491,7 +488,7 @@
         }
 
         // Cập nhật trạng thái Relay 1 - 8
-        for (let i = 0; i < 8; i++) {
+        for (let i = 0; i < 4; i++) {
           if (configRelay[i] && values[configRelay[i].id]) {
             const val = values[configRelay[i].id].value;
             const relayBox = document.getElementById(`relayBox${i + 1}`);
@@ -533,7 +530,7 @@
     });
 
     // Sự kiện Bật / Tắt Relay
-    for (let i = 1; i <= 8; i++) {
+    for (let i = 1; i <= 4; i++) {
       document.getElementById(`${i}turnOn`).addEventListener('click', () => {
         if (actionRelaysOn[i - 1]) eraWidget.triggerAction(actionRelaysOn[i - 1].action, null);
       });
@@ -559,3 +556,5 @@
 </body>
 
 </html>
+
+/////////https://github.com/tên-của-anh/tên-dự-án.git)
